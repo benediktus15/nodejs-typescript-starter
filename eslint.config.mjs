@@ -9,6 +9,8 @@ import importPlugin from 'eslint-plugin-import';
 
 export default [
   pluginJs.configs.recommended,
+  ...typescriptPlugin.configs.recommended,
+  ...typescriptPlugin.configs.stylistic,
   {
     ignores: ['node_modules/**', 'dist/**']
   },
@@ -23,32 +25,37 @@ export default [
       }
     },
     plugins: {
-      '@typescript-eslint': typescriptPlugin,
       prettier: prettierPlugin,
       jsdoc: jsdocPlugin,
       import: importPlugin
     },
     files: ['**/*.ts', '**/*.tsx'],
     rules: {
-      ...typescriptPlugin.configs.recommended.rules,
       ...prettierConfig.rules,
       ...jsdocPlugin.configs['flat/recommended'].rules,
       semi: 'error',
       eqeqeq: ['error', 'always'],
       'prettier/prettier': 'error',
       'no-console': ['error', { allow: ['error', 'info'] }],
-      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       'sort-imports': ['error', { ignoreDeclarationSort: true }],
       'import/first': 'error',
       'import/order': [
         'error',
         {
           'newlines-between': 'never',
-          alphabetize: { order: 'asc', caseInsensitive: false }
+          alphabetize: { order: 'asc', caseInsensitive: true },
+          pathGroups: [
+            {
+              pattern: '~/**',
+              group: 'external',
+              position: 'after'
+            }
+          ]
         }
       ],
       'jsdoc/check-syntax': 'warn',
       'jsdoc/check-values': 'error',
+      'jsdoc/no-undefined-types': ['warn', { definedTypes: ['Buffer'] }],
       'jsdoc/require-description': 'warn',
       'jsdoc/require-returns-description': 'off',
       'jsdoc/require-jsdoc': [
@@ -62,7 +69,8 @@ export default [
             FunctionExpression: true
           }
         }
-      ]
+      ],
+      'jsdoc/tag-lines': ['warn', 'never', { startLines: 1 }]
     }
   }
 ];
